@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assistente de Receitas</title>
+</head>
+<body>
+  <h1>🍲 Pergunte como fazer alguma receita típica do Brasil 🍲</h1>
+
+  <form id="pergunta-form">
+    <input type="text" id="pergunta" placeholder="Ex: Como fazer moqueca?" size="50" required />
+    <button type="submit">Enviar</button>
+  </form>
+
+  <h2>Resposta:</h2>
+  <pre id="resposta">...</pre>
+
+  <script>
+    const form = document.getElementById("pergunta-form");
+    const respostaEl = document.getElementById("resposta");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const pergunta = document.getElementById("pergunta").value;
+
+      respostaEl.textContent = "Carregando...";
+
+      try {
+        const res = await fetch("http://localhost:3000/api/perguntas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ pergunta })
+        });
+
+        const data = await res.json();
+        respostaEl.textContent = data.resposta || "Nenhuma resposta recebida.";
+      } catch (error) {
+        respostaEl.textContent = "Erro ao se comunicar com a API.";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
